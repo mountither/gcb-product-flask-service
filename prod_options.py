@@ -1,0 +1,6 @@
+db_options = ['brand','name','hold', 'finish', 'hair', 'fragrance', 'description', 'image', 'category']
+Category = ["Hair Styling", "Beard"]
+Brand = ["Uppercut", "Muk"]
+Finish = ["Natural Shine (Matte)", "Low Shine", "Medium Shine", "High shine"]
+Hold = ["Flexible", "Light", "Medium", "Firm", "Strong", "Heavy"]
+HairType = ["Short length","Medium length","Thin/Fine","Wavy/Curly","Straight","All Hair types/length","Hard to control hair"]

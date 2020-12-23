@@ -1,0 +1,250 @@
+<html>
+  <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>GCB-Products</title>
+    <link rel="stylesheet" href="/static/styles/styles.css">
+  </head>
+  <body> 
+    <div class="reponseInsert">
+            {% if inserted %}
+            <div class="alert">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+                <strong>Inserted</strong>
+              </div>
+            {% endif %}
+            {% if removed %}
+            <div class="alert">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+                <strong>Removed</strong>
+              </div>
+            {% endif %}
+            {% if updated %}
+            <div class="alert">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+                <strong>Updated</strong>
+              </div>
+            {% endif %}
+      </div>
+    <div class="container">
+        
+      <h1>Insert  Product</h1> 
+      <div class="form">
+      <form method="POST" action="/insertProduct" enctype="multipart/form-data">
+      <label class="q">Name of product<span class="ast">*</span></label>
+      <input type="text" name="name" required/>
+      <br>
+      <label  class="q">Category<span class="ast">*</span></label>
+      <select name="categ" required>
+          {%for i in range(0, Category|length)%}
+            <option value={{i+1}}>{{Category[i]}}</option>
+          {%endfor%} 
+      </select>
+      <br>   
+      <label class="q">Brand</label>
+      <select name="brand">
+        {%for i in range(0, Brand|length)%}
+          <option value={{i+1}}>{{Brand[i]}}</option>
+        {%endfor%}
+      </select>     
+      <br>
+      <label class="q">Finish</label>
+      <select name="finish">
+        {%for i in range(0, Finish|length)%}
+          <option value={{i+1}}>{{Finish[i]}}</option>
+        {%endfor%} 
+
+      </select>     
+      <br>
+      <label  class="q">Hold</label>
+      <select name="hold">
+        {%for i in range(0, Hold|length)%}
+        <option value={{i+1}}>{{Hold[i]}}</option>
+        {%endfor%}
+      </select>  
+      <br>  
+      <label class="q">Hair Type</label><br><br>
+
+      {%for i in range(0, HairType|length)%}
+      <input type="checkbox" id={{HairType[i]}} name="hairtype" value={{i+1}}>
+      <label for={{HairType[i]}}>{{HairType[i]}}</label><br>
+      {%endfor%} 
+      <br><br>
+      <label class="q" >Fragrance</label>
+      <input type="text" name="smell"/>
+      <br>
+      <label class="q" >Description<span class="ast">*</span></label>
+      <input type="text" required name="desc"/>
+      <br>
+      <label class="q">Upload Image <span class="ast">*</span></label>
+      <input type="file" required name="img"/>
+      <br><br>
+      <!-- <label class="q">Description</label>
+      <input type="text"/> -->
+
+      <button type="submit">Add to Database</button>
+      </form>
+      </div>
+    </div>
+    <button class="collapsible">Show Current Products</button>
+    <div class="container-sm">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col">ID</th>
+              <th scope="col">Name</th>
+            </tr>
+          </thead>
+          {% for data in curr_data %}
+            <tr>
+              <td class="prod-num">{{loop.index}}</td>
+              <td data-label="ID">{{data._id}}</td>
+              <td data-label="Name">{{data.name}}</td>
+            </tr>
+          {% endfor %}
+          </table>
+      </div>
+
+    <div class="container">
+
+      <h1>Update Product</h1>
+
+      <form method="POST" action="/updateProduct" enctype="multipart/form-data">
+        <label class="q">Product to update (ID)<span class="ast">*</span></label>
+        <input type="text" name="idUpdate" required/>
+
+      <div class="upd-check-div">
+      <label class="q q_upd">Field(s) to update</label><br>
+
+        {%for i in range(0, db_options|length)%}
+         <br> <input type="checkbox" onclick='showContent("{{db_options[i]}}-content")' id= "{{db_options[i]}}-check" class="upd-check"
+          name="upd_options" value={{db_options[i]}}>
+      <label class="upd-check-lbl" for={{db_options[i]}}-check>{{db_options[i]}}</label>
+        {%endfor%}         
+      </div>
+
+
+    <div id="name-content" style="display: none;">
+    <label class="q">Name<span class="ast">*</span></label>
+    <input type="text" name="name"/> 
+  </div>
+    <br>
+    <div id="category-content"  style="display: none;">
+    <label  class="q">Category<span class="ast">*</span></label>
+    <select name="category">
+        {%for i in range(0, Category|length)%}
+          <option value={{i+1}}>{{Category[i]}}</option>
+        {%endfor%} 
+    </select>
+    </div>
+    <br>
+      <div id="brand-content" style="display: none;">
+    <label class="q">Brand</label>
+    <select name="brand">
+      {%for i in range(0, Brand|length)%}
+        <option value={{i+1}}>{{Brand[i]}}</option>
+      {%endfor%}
+    </select> 
+   </div>
+    <br>
+ <div id="finish-content" style="display: none;">
+    <label class="q">Finish</label>
+    <select name="finish">
+      {%for i in range(0, Finish|length)%}
+        <option value={{i+1}}>{{Finish[i]}}</option>
+      {%endfor%} 
+
+    </select>     
+  </div>
+    <br>
+ <div id="hold-content" style="display: none;">
+    <label  class="q">Hold</label>
+    <select name="hold">
+      {%for i in range(0, Hold|length)%}
+      <option value={{i+1}}>{{Hold[i]}}</option>
+      {%endfor%}
+    </select>  </div>
+    <br>  
+ <div id="hair-content" style="display: none;">
+    <label class="q">Hair</label><br><br>
+    {%for i in range(0, HairType|length)%}
+    <input type="checkbox" id="{{HairType[i]}}_upd" name="hair" value={{i+1}}>
+    <label for="{{HairType[i]}}_upd">{{HairType[i]}}</label><br>
+    {%endfor%} 
+    <br><br>
+</div>
+
+ <div id="fragrance-content" style="display: none;">
+    <label class="q" >Fragrance</label>
+    <input type="text" name="fragrance"/>
+    <br>
+</div>
+
+ <div id="description-content" style="display: none;">
+    <label class="q" >Description<span class="ast">*</span></label>
+    <input type="text" name="description"/>
+    <br>
+</div>
+
+ <div id="image-content" style="display: none;">
+    <label class="q">Image<span class="ast">*</span></label>
+    <input type="file" name="image"/>
+    <br><br>
+
+</div>
+    <button class="updateBtn" type="submit">Update Field</button>
+    </form>
+
+    </div>
+
+<script>
+      const showContent = (content) => {
+          var contentBlock = document.getElementById(content);
+
+          if (contentBlock.style.display == "none"){
+              contentBlock.style.display = "block";
+          } else {
+             contentBlock.style.display = "none";
+          }
+      }
+
+
+      var coll = document.getElementsByClassName("collapsible");
+      var i;
+
+      for (i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", 
+        function() {
+
+          this.classList.toggle("active");
+          var content = this.nextElementSibling;
+          if (content.style.maxHeight){
+            content.style.maxHeight = null;
+          } else {
+            content.style.maxHeight = content.scrollHeight + "px";
+          } 
+        });
+      }
+
+  </script>
+
+  <div class="container">
+      <h1>Remove Product</h1>
+    
+    <form method="POST" action="/removeProduct">
+        <label class="q">Product ID<span class="ast">*</span></label> 
+        <input type="text" name="idRemove" required/>
+        <button class="removeBtn" type="submit">Remove from Database</button>
+    </form>
+    </div>
+
+
+
+
+
+    
+
+
+
+  </body>
+</html>
