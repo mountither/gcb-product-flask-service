@@ -1,4 +1,4 @@
 .env
 __pycache__
-to-be-uploaded
-compressed-images-bucket
+./to-be-uploaded
+./compressed-images-bucket
