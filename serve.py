@@ -54,8 +54,10 @@ def insertProduct():
     desc = request.form['desc']
     img = request.files['img']
 
+    get_url = getUploadedURL(img)
+
     insert_data = {"category": categ, 'brand' : brand, 'name': name , 'hold' : hold, 'finish' : 
-    finish, 'hair' : elementsToInt(type), 'fragrance': smell, 'description': desc, "image": getUploadedImgURL(img)}
+    finish, 'hair' : elementsToInt(type), 'fragrance': smell, 'description': desc, "image": get_url.generateImg(), 'webp_image': get_url.generateWebp()}
     db.collection.insert_one(insert_data)
 
     print(img)
@@ -90,10 +92,12 @@ def updateProduct():
             db.collection.update_one({'_id':ObjectId(id)}, {'$set': {'hair': elementsToInt(type)}}, upsert=False)
 
         elif opt[i] == "image":
-            
+
             img = request.files['image']
-            getUploadedImgURL(img)
-            # db.collection.update_one({'_id':ObjectId(id)}, {'$set': {'image': getUploadedImgURL(img)}}, upsert=False)
+
+            get_url = getUploadedURL(img)
+
+            db.collection.update_one({'_id':ObjectId(id)}, {'$set': {'image': get_url.generateImg(), 'webp_image': get_url.generateWebp()}}, upsert=False)
         else:
             val = int(request.form[opt[i]])
             db.collection.update_one({'_id':ObjectId(id)}, {'$set': {opt[i]: val}}, upsert=False)
@@ -112,31 +116,47 @@ def removeProduct():
     return redirect(url_for('.home', removed=True))
 
 
-def getUploadedImgURL(imgFile):
-    
-    final_folder = './compressed-images-bucket/'
-    file_ext = mimetypes.guess_extension(imgFile.content_type)
+class getUploadedURL:
+    def __init__(self, imageFile):
 
-    if not path.exists(final_folder):
-        makedirs(final_folder)
+        self.bucket = storage.Client().get_bucket(environ.get('CLOUD_STORAGE_BUCKET'))
+        self.imgFile = imageFile
+        self.filename, self.file_ext = path.splitext(self.imgFile.filename)
+        self.pic = Image.open(BytesIO(self.imgFile.read()))
+        self.final_folder = './compressed-images-bucket/'
+        
 
-    gcs = storage.Client()
-    bucket = gcs.get_bucket(environ.get('CLOUD_STORAGE_BUCKET'))
+    def generateImg(self):
 
-    pic = Image.open(BytesIO(imgFile.read()))
+        # file_ext = mimetypes.guess_extension(imgFile.content_type)
+        if not path.exists(self.final_folder):
+            makedirs(self.final_folder)
 
-    if file_ext == ".png":
-        pic.convert(mode='P', palette=Image.ADAPTIVE).save(final_folder + imgFile.filename, optimize=True, quality=40)
-    else: 
-        pic.save(final_folder + imgFile.filename, 'JPEG', dpi=[300,300], quality=40)
+        if self.file_ext == ".png":
+            self.pic.convert(mode='P', palette=Image.ADAPTIVE).save(self.final_folder + self.imgFile.filename, optimize=True, quality=40)
+        else: 
+            self.pic.save(self.final_folder + self.imgFile.filename, 'JPEG', quality=40, optimize=True)
 
-    blob = bucket.blob(imgFile.filename)
-    blob.upload_from_filename(final_folder + imgFile.filename)
+        # pic.save(final_folder + self.filename + '.webp', 'webp')
 
-    print(blob.public_url)
-    remove(final_folder + imgFile.filename)
+        # print(self.imgFile.filename)
+        blob = self.bucket.blob(self.imgFile.filename)
+        blob.upload_from_filename(self.final_folder + self.imgFile.filename)
 
-    return blob.public_url
+        #remove(self.final_folder + self.imgFile.filename)
+
+        return blob.public_url
+
+    def generateWebp(self):
+
+        self.pic.save(self.final_folder + self.filename + '.webp', 'webp')
+
+        blobWebp = self.bucket.blob(self.filename + '.webp')
+
+        blobWebp.upload_from_filename(self.final_folder + self.filename + '.webp')
+
+        return blobWebp.public_url
+
 
 def elementsToInt(type):
     type = [ int(x) for x in type]

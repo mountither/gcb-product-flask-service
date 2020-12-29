@@ -93,6 +93,8 @@
               <th scope="col"></th>
               <th scope="col">ID</th>
               <th scope="col">Name</th>
+              <th scope="col">Image (GCP Bucket)</th>
+              <th scope="col">Webp-Image</th>
             </tr>
           </thead>
           {% for data in curr_data %}
@@ -100,6 +102,8 @@
               <td class="prod-num">{{loop.index}}</td>
               <td data-label="ID">{{data._id}}</td>
               <td data-label="Name">{{data.name}}</td>
+              <td data-label="Image (GCP Bucket)">{{data.image}}</td>
+              <td data-label="Webp-Image">{{data['webp-image']}}</td>
             </tr>
           {% endfor %}
           </table>
@@ -192,6 +196,12 @@
     <br><br>
 
 </div>
+  <div id="webp-image-content" style="display: none;">
+    <label class="q">Webp Image<span class="ast">*</span></label>
+    <input type="file" name="webp-image" accept=".webp"/>
+    <br><br>
+
+  </div>
     <button class="updateBtn" type="submit">Update Field</button>
     </form>
 
